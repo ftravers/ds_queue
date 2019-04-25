@@ -1,0 +1,45 @@
+The queue library is stateful, so we have to have a way to manage that.
+
+This example uses *integrant*.
+
+#+BEGIN_SRC clojure -n
+  (ns ...
+    (:require
+     [ds-queue.messages :as queues]
+     [integrant.core :as ig]))
+
+  (def config
+    {:queues/state {}})
+
+  (defmethod ig/init-key :queues/state
+    [_ _]
+    (queues/start))
+
+  (defonce system (atom (ig/init config)))
+
+  (defmethod ig/halt-key! :queues/state
+    [_ _]
+    (queues/stop)
+    (reset! system nil))
+#+END_SRC
+
+So the above gives us functions to start and stop, lets use those now:
+
+#+BEGIN_SRC clojure +n
+  ;; start system
+  (ig/init config)
+
+  ;; create a subscription for messages that have the key ~:msg-type~
+  ;; with it's value set to ~:abc~.  When we see messages like that,
+  ;; just print them out.
+  (queues/watch-n-do!
+   #(= :abc (:msg-type %))
+   #(println (str ":abc watch message ==> " (:value %))))
+
+  ;; send a message on the queue
+  (queues/pub-msg {:msg-type :abc :value "HELLO"})
+
+  ;; shutdown the system. this should be integrated into your *stuart
+  ;; sierra reloaded* workflow
+  (ig/halt! @system)
+#+END_SRC

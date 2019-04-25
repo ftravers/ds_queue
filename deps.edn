@@ -1,7 +1,11 @@
 {:paths ["src" "resources" "target"]
-   :deps {rum {:mvn/version "0.11.3"}}
-   :aliases
-   {:dev {:extra-paths ["test"]
-          :extra-deps
-          {com.bhauman/figwheel-main {:mvn/version "0.2.0"}}}
-    :fig {:main-opts ["-m" "figwheel.main"]}}}
+ :deps {
+        org.clojure/core.async {:mvn/version "0.4.490"}
+        integrant              {:mvn/version "0.7.0"}
+        rum                    {:mvn/version "0.11.3"}
+        }
+ :aliases
+ {:dev {:extra-paths ["test"]
+        :extra-deps
+        {com.bhauman/figwheel-main {:mvn/version "0.2.0"}}}
+  :fig {:main-opts ["-m" "figwheel.main"]}}}
